@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -10,7 +11,10 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", hello)
 
-	http.ListenAndServe(":3000", nil)
+	var router = mux.NewRouter()
+
+	router.HandleFunc("/", hello)
+
+	http.ListenAndServe(":3000", router)
 }
