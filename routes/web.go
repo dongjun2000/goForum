@@ -24,4 +24,16 @@ var webRoutes = WebRoutes{
 		"/",
 		handlers.Index,
 	},
+	WebRoute{
+		"login",
+		"GET",
+		"/login",
+		handlers.Login,
+	},
+	WebRoute{
+		"signup",
+		"GET",
+		"/signup",
+		handlers.Signup,
+	},
 }
