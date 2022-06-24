@@ -1,20 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gorilla/mux"
+	. "goForum/routes"
+
+	"log"
 	"net/http"
 )
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello GoWeb~")
+func main() {
+	startWebServer("8000")
 }
 
-func main() {
+// 通过指定端口启动 Web 服务器
+func startWebServer(port string) {
+	router := NewRouter()
 
-	var router = mux.NewRouter()
+	server := http.Server{
+		Addr: ":8000",
+		Handler: router,
+	}
 
-	router.HandleFunc("/", hello)
+	log.Println("Starting HTTP service at " + port)
 
-	http.ListenAndServe(":3000", router)
+	// 启动协程监听请求
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatal("Error: ", err)
+	}
 }
