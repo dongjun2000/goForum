@@ -15,6 +15,10 @@ func main() {
 func startWebServer(port string) {
 	router := NewRouter()
 
+	// 处理静态资源文件
+	assets := http.FileServer(http.Dir("public"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", assets))
+
 	server := http.Server{
 		Addr: ":8000",
 		Handler: router,
