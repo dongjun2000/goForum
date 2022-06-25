@@ -54,4 +54,22 @@ var webRoutes = WebRoutes{
 		"/logout",
 		handlers.Logout,
 	},
+	WebRoute{
+		"newThread",
+		"GET",
+		"/thread/new",
+		handlers.NewThread,
+	},
+	WebRoute{
+		"createThread",
+		"POST",
+		"/thread/create",
+		handlers.CreateThread,
+	},
+	WebRoute{
+		"readThread",
+		"GET",
+		"/thread/read",
+		handlers.ReadThread,
+	},
 }

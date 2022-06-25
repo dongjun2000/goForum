@@ -15,7 +15,7 @@ type Session struct {
 func (session *Session) Check() (valid bool, err error) {
 	sql := "select id, uuid, email, user_id, created_at from sessions where uuid = ?"
 	err = Db.QueryRow(sql, session.Uuid).
-		Scan(&session.Id, &session.Uuid, &session.Email)
+		Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
 	if err != nil {
 		valid = false
 		return
