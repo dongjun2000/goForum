@@ -36,4 +36,22 @@ var webRoutes = WebRoutes{
 		"/signup",
 		handlers.Signup,
 	},
+	WebRoute{
+		"signupAccount",
+		"POST",
+		"/signup_account",
+		handlers.SignupAccount,
+	},
+	WebRoute{
+		"authenticate",
+		"POST",
+		"/authenticate",
+		handlers.Authenticate,
+	},
+	WebRoute{
+		"logout",
+		"GET",
+		"/logout",
+		handlers.Logout,
+	},
 }

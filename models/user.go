@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	Id int
@@ -31,7 +33,7 @@ func (user *User) CreateSession() (session Session, err error) {
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRow(uuid).Scan(&session.Id, &session.Uuid, &session.Email, &session.CreatedAt)
+	err = stmt.QueryRow(uuid).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
 	return
 }
 
@@ -51,7 +53,7 @@ func (user *User) Create() (err error) {
 	defer stmt.Close()
 
 	uuid := createUUID()
-	stmt.Exec(uuid, user.Name, user.Email, user.Password, time.Now())
+	stmt.Exec(uuid, user.Name, user.Email, Encrypt(user.Password), time.Now())
 
 	sql = "select id, uuid, created_at from users where uuid = ?"
 	stmt, err = Db.Prepare(sql)
@@ -107,6 +109,14 @@ func Users() (users []User, err error) {
 		users = append(users, user)
 	}
 	rows.Close()
+	return
+}
+
+func UserByEmail(email string) (user User, err error) {
+	user = User{}
+	sql := "select id, uuid, name, email, password, created_at from users where email = ?"
+	err = Db.QueryRow(sql, email).
+		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.CreatedAt)
 	return
 }
 
