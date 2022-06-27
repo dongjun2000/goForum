@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"goForum/models"
 	"net/http"
 )
@@ -24,11 +23,11 @@ func CreateThread(w http.ResponseWriter, r *http.Request) {
 	} else {
 		user, err := sess.User()
 		if err != nil {
-			fmt.Println("Cannot get user from session")
+			danger(err, "Cannot get user from session")
 		}
 		topic := r.PostFormValue("topic")
 		if _, err := user.CreateThread(topic); err != nil {
-			fmt.Println("Cannot create thread")
+			danger(err, "Cannot create thread")
 		}
 		http.Redirect(w, r, "/", 302)
 	}
@@ -40,7 +39,7 @@ func ReadThread(w http.ResponseWriter, r *http.Request) {
 	uuid := vals.Get("id")
 	thread, err := models.ThreadByUUID(uuid)
 	if err != nil {
-		fmt.Println("Cannot read thread")
+		error_message(w, r, "Cannot read thread")
 	} else {
 		_, err := session(w, r)
 		if err != nil {

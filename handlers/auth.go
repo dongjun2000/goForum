@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"fmt"
 	"goForum/models"
-	"log"
 	"net/http"
 )
 
@@ -25,7 +23,7 @@ func SignupAccount(w http.ResponseWriter, r *http.Request) {
 		Password: r.PostFormValue("password"),
 	}
 	if err := user.Create(); err != nil {
-		log.Println("Cannot create user")
+		danger(err, "Cannot create user")
 	}
 	http.Redirect(w, r, "/login", 302)
 }
@@ -34,12 +32,12 @@ func SignupAccount(w http.ResponseWriter, r *http.Request) {
 func Authenticate(w http.ResponseWriter, r *http.Request) {
 	user, err := models.UserByEmail(r.PostFormValue("email"))
 	if err != nil {
-		fmt.Println("Cannot find user")
+		danger(err, "Cannot find user")
 	}
 	if user.Password == models.Encrypt(r.PostFormValue("password")) {
 		session, err := user.CreateSession()
 		if err != nil {
-			fmt.Println("Cannot create session")
+			danger(err, "Cannot create session")
 		}
 		// 给客户端种cookie
 		cookie := http.Cookie{
@@ -57,9 +55,10 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 // GET /logout
 func Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("_cookie")
-	if err != http.ErrNoCookie {
-		session := models.Session{Uuid: cookie.Value}
-		session.DeleteByUUID()
+	if err == http.ErrNoCookie {
+		warning(err, "Failed to get cookie")
 	}
+	session := models.Session{Uuid: cookie.Value}
+	session.DeleteByUUID()
 	http.Redirect(w, r, "/", 302)
 }
