@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Post struct {
 	Id int
@@ -20,7 +22,7 @@ func (post *Post) CreatedAtDate() string {
 func (post *Post) User() (user User) {
 	user = User{}
 	sql := "select id, uuid, name, email, created_at from users where id = ?"
-	Db.QueryRow(sql, post.Id).
+	Db.QueryRow(sql, post.UserId).
 		Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.CreatedAt)
 	return
 }

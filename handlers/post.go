@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"goForum/models"
 	"net/http"
 )
@@ -20,7 +21,10 @@ func PostThread(w http.ResponseWriter, r *http.Request) {
 		uuid := r.PostFormValue("uuid")
 		thread, err := models.ThreadByUUID(uuid)
 		if err != nil {
-			error_message(w, r, "Cannot read thread")
+			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "thread_not_found",
+			})
+			error_message(w, r, msg)
 		}
 		if _, err := user.CreatePost(thread, body); err != nil {
 			danger(err, "Cannot create post")

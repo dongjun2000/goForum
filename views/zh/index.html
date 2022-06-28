@@ -9,7 +9,7 @@
         <span class="lead"><i class="fa fa-comment-o"></i> {{ .Topic }}</span>
       </div>
       <div class="panel-body">
-        群主：<strong>{{ .User.Name }}</strong> - 创建于：{{ .CreatedAtDate }} - 发表了 {{ .NumReplies }} 帖子
+        群主：<strong>{{ .User.Name }}</strong> - 创建于：{{ .CreatedAt | fdate }} - 发表了 {{ .NumReplies }} 帖子
         <div class="pull-right">
           <a href="/thread/read?id={{ .Uuid }}">进入</a>
         </div>

@@ -1,6 +1,10 @@
 package handlers
 
 import (
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	. "goForum/config"
+	"time"
+
 	"errors"
 	"fmt"
 	"goForum/models"
@@ -13,8 +17,14 @@ import (
 
 // 声明一个 *log.Logger 类型的 logger 变量作为日志处理器
 var logger *log.Logger
+var config *Configuration
+var localizer *i18n.Localizer
 
 func init() {
+	// 获取全局配置实例
+	config = LoadConfig()
+	// 获取本地化实例
+	localizer = i18n.NewLocalizer(config.LocaleBundle, config.App.Language)
 	// 日志文件存储到 logs/fofrum.log，通过 os.OpenFile() 打开这个日志句柄，如果文件不存在，则自动创建
 	file, err := os.OpenFile("logs/goforum.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
@@ -45,11 +55,18 @@ func generateHTML(w http.ResponseWriter, data interface{}, filenames ...string) 
 	// files := []string{"views/layout.html", "views/navbar.html", "views/index.html"}
 	var files []string
 	for _, file := range filenames {
-		files = append(files, fmt.Sprintf("views/%s.html", file))
+		files = append(files, fmt.Sprintf("views/%s/%s.html", config.App.Language, file))
 	}
-
-	templates := template.Must(template.ParseFiles(files...))
+	funcMap := template.FuncMap{"fdate": formatDate}
+	t := template.New("layout").Funcs(funcMap)
+	templates := template.Must(t.ParseFiles(files...))
 	templates.ExecuteTemplate(w, "layout", data)
+}
+
+// 日期格式化辅助函数
+func formatDate(t time.Time) string {
+	datetime := "2006-01-02 15:04-05"
+	return t.Format(datetime)
 }
 
 func session(w http.ResponseWriter, r *http.Request) (sess models.Session, err error) {
