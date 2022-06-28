@@ -2,32 +2,35 @@ package main
 
 import (
 	. "goForum/routes"
+	. "goForum/config"
 
 	"log"
 	"net/http"
 )
 
 func main() {
-	startWebServer("8000")
+	startWebServer()
 }
 
-// 通过指定端口启动 Web 服务器
-func startWebServer(port string) {
+// 启动 Web 服务器
+func startWebServer() {
+	// 初始化全局配置
+	config := LoadConfig()
 	router := NewRouter()
 
 	// 处理静态资源文件
-	assets := http.FileServer(http.Dir("public"))
+	assets := http.FileServer(http.Dir(config.App.Static))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", assets))
 
 	server := http.Server{
-		Addr: ":8000",
+		Addr: config.App.Address,
 		Handler: router,
 	}
 
-	log.Println("Starting HTTP service at " + port)
+	log.Println("Starting HTTP service at " + config.App.Address)
 
 	// 启动协程监听请求
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatal("Error: ", err)
+		log.Fatal("Error: ", err.Error())
 	}
 }

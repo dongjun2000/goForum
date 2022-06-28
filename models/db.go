@@ -1,6 +1,8 @@
 package models
 
 import (
+	. "goForum/config"
+
 	"crypto/sha1"
 	"database/sql"
 	"fmt"
@@ -18,19 +20,23 @@ var Db *sql.DB
 func init() {
 	var err error
 
+	config := LoadConfig()
+
+	driver := config.Db.Driver
+
 	// 配置数据源信息，用于定义如何连接数据库
-	config := mysql.Config{
-		User: "root",
-		Passwd: "",
-		Addr: ":3306",
+	configDSN := mysql.Config{
+		User: config.Db.User,
+		Passwd: config.Db.Password,
+		Addr: config.Db.Address,
 		Net: "tcp",
-		DBName: "goforum",
+		DBName: config.Db.Database,
 		ParseTime: true,
 		AllowNativePasswords: true,
 	}
 
-	fmt.Println(config.FormatDSN())
-	Db, err = sql.Open("mysql", config.FormatDSN())
+	//fmt.Println(configDSN.FormatDSN())
+	Db, err = sql.Open(driver, configDSN.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
