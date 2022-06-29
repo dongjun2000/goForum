@@ -20,17 +20,15 @@ var Db *sql.DB
 func init() {
 	var err error
 
-	config := LoadConfig()
-
-	driver := config.Db.Driver
+	driver := ViperConfig.Db.Driver
 
 	// 配置数据源信息，用于定义如何连接数据库
 	configDSN := mysql.Config{
-		User: config.Db.User,
-		Passwd: config.Db.Password,
-		Addr: config.Db.Address,
+		User: ViperConfig.Db.User,
+		Passwd: ViperConfig.Db.Password,
+		Addr: ViperConfig.Db.Address,
 		Net: "tcp",
-		DBName: config.Db.Database,
+		DBName: ViperConfig.Db.Database,
 		ParseTime: true,
 		AllowNativePasswords: true,
 	}

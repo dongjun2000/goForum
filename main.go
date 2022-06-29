@@ -1,8 +1,8 @@
 package main
 
 import (
-	. "goForum/routes"
 	. "goForum/config"
+	. "goForum/routes"
 
 	"log"
 	"net/http"
@@ -14,20 +14,19 @@ func main() {
 
 // 启动 Web 服务器
 func startWebServer() {
-	// 初始化全局配置
-	config := LoadConfig()
+	// 通过 router.go 中定义的路由器来分发请求
 	router := NewRouter()
 
 	// 处理静态资源文件
-	assets := http.FileServer(http.Dir(config.App.Static))
+	assets := http.FileServer(http.Dir(ViperConfig.App.Static))
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", assets))
 
 	server := http.Server{
-		Addr: config.App.Address,
+		Addr: ViperConfig.App.Address,
 		Handler: router,
 	}
 
-	log.Println("Starting HTTP service at " + config.App.Address)
+	log.Println("Starting HTTP service at " + ViperConfig.App.Address)
 
 	// 启动协程监听请求
 	if err := server.ListenAndServe(); err != nil {
